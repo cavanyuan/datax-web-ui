@@ -1,12 +1,18 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.jobDesc" placeholder="任务名称" style="width: 200px;" class="filter-item" />
+      <el-input v-model="listQuery.jobDesc" placeholder="任务名称" style="width: 200px;" class="filter-item" @keyup.enter.native="fetchData"/>
       <el-select v-model="projectIds" multiple placeholder="所属项目" class="filter-item">
         <el-option v-for="item in jobProjectList" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
-      <el-select v-model="listQuery.glueType" placeholder="任务类型" style="width: 200px" class="filter-item">
+<!--      <el-select v-model="listQuery.glueType" placeholder="任务类型" style="width: 200px" class="filter-item">
         <el-option v-for="item in glueTypes" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>  -->
+      <el-select v-model="listQuery.triggerStatus" placeholder="任务状态" style="width: 200px" class="filter-item">
+        <el-option v-for="item in triggerStatusList" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select v-model="listQuery.lastHandleCode" placeholder="执行状态" style="width: 200px" class="filter-item">
+        <el-option v-for="item in statusList" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="fetchData">
         搜索
@@ -360,12 +366,13 @@ export default {
       total: 0,
       listQuery: {
         current: 1,
-        size: 10,
+        size: 50,
         jobGroup: 0,
         projectIds: '',
         triggerStatus: -1,
         jobDesc: '',
-        glueType: ''
+        glueType: '',
+        lastHandleCode: -1
       },
       showCronBox: false,
       dialogPluginVisible: false,
@@ -486,10 +493,16 @@ export default {
         { value: 'Timestamp', label: '时间戳' }
       ],
       statusList: [
+        { value: -1, label: '全部' },
+        { value: 200, label: '成功' },
         { value: 500, label: '失败' },
         { value: 502, label: '失败(超时)' },
-        { value: 200, label: '成功' },
         { value: 0, label: '无' }
+      ],
+      triggerStatusList: [
+        { value: -1, label: '全部' },
+        { value: 1, label: '启动' },
+        { value: 0, label: '停止' }
       ]
     }
   },
